@@ -1,13 +1,18 @@
 package com.example.dictionary;
 
+import com.example.dictionary.Entity.Word;
+
 public class Result {
 
     public String value;
     public int iconId;
     public int arrowId;
 
-    public Result(String value) {
-        this.value = value;
+    Word word;
+
+    public Result(Word word) {
+        this.word = word;
+        this.value = word.getItems()[0];
         this.iconId = R.drawable.searchicon;
         this.arrowId = R.drawable.north_west_arrow;
     }

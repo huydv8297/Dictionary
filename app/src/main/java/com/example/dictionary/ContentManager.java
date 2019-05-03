@@ -11,6 +11,8 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
+import com.example.dictionary.Controller.SearchController;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,7 @@ public class ContentManager {
     List<Result> resultList = new ArrayList<Result>();
     ListView listView;
     LayoutInflater layoutInflater;
+    SearchController searchController = new SearchController();
     public ContentManager(LayoutInflater layoutInflater ,ListView listView) {
         this.listView = listView;
         this.layoutInflater = layoutInflater;
@@ -41,9 +44,9 @@ public class ContentManager {
         });
     }
 
-    public void Search(String keyword)
+    public void Search(Context context, String keyword)
     {
-        resultList.add(new Result(keyword));
+        resultList = searchController.getResults(context,"en_vi.db", "main", keyword, "word");
         listView.setAdapter(null);
         adapter = new ResultListAdapter(layoutInflater, resultList);
         listView.setAdapter(adapter);

@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length() != 0){
                     Log.e("enter", s.toString());
-                    contentManager.Search(s.toString());
+                    contentManager.Search(MainActivity.this, s.toString());
                     cancleButton.setVisibility(View.VISIBLE);
                 }else{
                     contentManager.Cancel();

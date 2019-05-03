@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import com.example.dictionary.DAO.DataBaseController;
 import com.example.dictionary.Entity.Word;
+import com.example.dictionary.Result;
 
 import java.util.ArrayList;
 
@@ -13,15 +14,16 @@ public class SearchController {
 
     }
 
-    public ArrayList<Word> getResults(Context context, String nameDB, String tableName, String keyWord, String columeQuery) {
+    public ArrayList<Result> getResults(Context context, String nameDB, String tableName, String keyWord, String columeQuery) {
         DataBaseController mDbHelper = new DataBaseController(context, nameDB, nameDB);
         mDbHelper.createDatabase();
         mDbHelper.open();
 
-        ArrayList<Word> wordResults = new ArrayList<>();
+        ArrayList<Result> wordResults = new ArrayList<>();
 
         Cursor cursor = mDbHelper.getWord(tableName, columeQuery + " LIKE '" + keyWord + "%'");
-
+        if(cursor == null)
+            return  wordResults;
         if (cursor.moveToFirst()) {
             do {
                 Word word = new Word();
@@ -31,7 +33,8 @@ public class SearchController {
                     items[i] = cursor.getString(i + 1);
                 }
                 word.setItems(items);
-                wordResults.add(word);
+
+                wordResults.add(new Result(word));
             } while (cursor.moveToNext());
         }
         mDbHelper.close();
