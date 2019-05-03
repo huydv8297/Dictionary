@@ -6,20 +6,19 @@ import android.database.Cursor;
 import com.example.dictionary.DAO.DataBaseController;
 import com.example.dictionary.Entity.Word;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
 public class SearchController {
     public SearchController() {
 
     }
 
-    public List<Word> getResults(Context context, String nameDB, String tableName, String keyWord, String columeQuery) {
+    public ArrayList<Word> getResults(Context context, String nameDB, String tableName, String keyWord, String columeQuery) {
         DataBaseController mDbHelper = new DataBaseController(context, nameDB, nameDB);
         mDbHelper.createDatabase();
         mDbHelper.open();
 
-        LinkedList<Word> wordResults = new LinkedList<Word>();
+        ArrayList<Word> wordResults = new ArrayList<>();
 
         Cursor cursor = mDbHelper.getWord(tableName, columeQuery + " LIKE '" + keyWord + "%'");
 
