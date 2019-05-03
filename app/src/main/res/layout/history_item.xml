@@ -10,7 +10,7 @@
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:layout_weight="1"
-       android:src="@drawable/history"/>
+       />
 
     <TextView
         android:id="@+id/value"
@@ -25,5 +25,6 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_weight="1"
+        android:layout_marginRight="10dp"
         android:src="@drawable/north_west_arrow" />
 </LinearLayout>

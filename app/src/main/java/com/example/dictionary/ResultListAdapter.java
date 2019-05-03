@@ -6,19 +6,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
-public class HistoryListAdapter extends BaseAdapter {
+public class ResultListAdapter extends BaseAdapter {
 
-    private List<HistoryItem> listData;
+    private List<Result> listData;
     private LayoutInflater layoutInflater;
 
-    public HistoryListAdapter(LayoutInflater aContext,  List<HistoryItem> listData) {
+
+    public ResultListAdapter(LayoutInflater layoutInflater,  List<Result> listData) {
         this.listData = listData;
-        layoutInflater = aContext;
+        this.layoutInflater = layoutInflater;
     }
 
     @Override
@@ -49,14 +51,13 @@ public class HistoryListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        HistoryItem historyItem = this.listData.get(position);
-        holder.value.setText(historyItem.getValue());
-        holder.arrow.setImageResource(historyItem.getArrowId());
-        holder.icon.setImageResource(historyItem.getIconId());
+        Result result = this.listData.get(position);
+        holder.value.setText(result.getValue());
+        holder.arrow.setImageResource(result.getArrowId());
+        holder.icon.setImageResource(result.getIconId());
 
         return convertView;
     }
-
 
 
     static class ViewHolder {

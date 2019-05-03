@@ -8,26 +8,44 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/app_bar_main">
     <LinearLayout
+        android:id="@+id/flater"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <EditText
-            android:id="@+id/input_text"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/input_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="Enter sonething..."
+                android:layout_weight="8"
+                />
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:id="@+id/cancel_button"
+                android:src="@drawable/close"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone"
+                android:layout_marginRight="@dimen/fab_margin"
+                />
+        </LinearLayout>
 
-            app:layout_constraintEnd_toStartOf="@+id/view_pager"
-            app:layout_constraintVertical_chainStyle="spread"
-            app:layout_constraintStart_toStartOf="parent"
-            />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/view_pager"
+        <ListView
+            android:id="@+id/history_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            />
+            android:layout_marginLeft="@dimen/fab_margin"
+            android:divider="@null"
+            android:dividerHeight="@dimen/fab_margin">
+
+        </ListView>
     </LinearLayout>
 
 
