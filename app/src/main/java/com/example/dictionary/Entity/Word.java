@@ -1,6 +1,8 @@
 package com.example.dictionary.Entity;
 
-public class Word {
+import java.io.Serializable;
+
+public class Word implements Serializable {
     private int id;
     private String[] items;
 

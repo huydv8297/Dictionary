@@ -23,6 +23,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -37,16 +38,18 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     TextView title;
-    EditText editText;
+    TextView editText;
     public List<BaseAdapter> adapterList = new ArrayList<>();
     ListView dictionaryList;
     List<String> items = new ArrayList<>();
     Fragment fragment;
     ContentManager contentManager;
     ImageView cancleButton;
+    private String[] history;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("MainActivity", "OnCreate");
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -54,6 +57,9 @@ public class MainActivity extends AppCompatActivity
         title = findViewById(R.id.title);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+
+        ListView listView = findViewById(R.id.history_list);
+        contentManager = new ContentManager(MainActivity.this, listView);
 
         cancleButton = findViewById(R.id.cancel_button);
         cancleButton.setOnClickListener(new View.OnClickListener() {
@@ -85,7 +91,10 @@ public class MainActivity extends AppCompatActivity
                 closeNavigation();
             }
         });
+
+        history = contentManager.getHistory();
         editText = (EditText) findViewById(R.id.input_text);
+
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -96,7 +105,7 @@ public class MainActivity extends AppCompatActivity
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length() != 0){
                     Log.e("enter", s.toString());
-                    contentManager.Search(MainActivity.this, s.toString());
+                    contentManager.Search( s.toString());
                     cancleButton.setVisibility(View.VISIBLE);
                 }else{
                     contentManager.Cancel();
@@ -110,8 +119,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        ListView listView = findViewById(R.id.history_list);
-        contentManager = new ContentManager(getLayoutInflater(), listView);
+
 
     }
 

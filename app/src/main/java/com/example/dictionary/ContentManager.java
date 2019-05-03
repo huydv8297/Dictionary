@@ -1,6 +1,7 @@
 package com.example.dictionary;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -12,8 +13,10 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.example.dictionary.Controller.SearchController;
+import com.example.dictionary.Entity.Word;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ContentManager {
@@ -23,14 +26,12 @@ public class ContentManager {
     ListView listView;
     LayoutInflater layoutInflater;
     SearchController searchController = new SearchController();
-    public ContentManager(LayoutInflater layoutInflater ,ListView listView) {
+    Context context;
+
+    public ContentManager(Context context ,ListView listView) {
+        this.context = context;
         this.listView = listView;
-        this.layoutInflater = layoutInflater;
-        historyItems.add(new HistoryItem("test1",0));
-        historyItems.add(new HistoryItem("hâhaa",0));
-        historyItems.add(new HistoryItem("test1",0));
-        historyItems.add(new HistoryItem("test1",0));
-        historyItems.add(new HistoryItem("test1",0));
+        this.layoutInflater = layoutInflater.from(context);
 
         adapter = new HistoryListAdapter(layoutInflater ,historyItems);
 
@@ -38,13 +39,39 @@ public class ContentManager {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                historyItems.add(new HistoryItem("adđ", 9));
-                adapter.notifyDataSetChanged();
+                if(adapter instanceof ResultListAdapter){
+                    HistoryItem item = new HistoryItem( resultList.get(position).word, 1);
+                    if(!historyItems.contains(item))
+                    {
+                        historyItems.add(0, item);
+                        adapter.notifyDataSetChanged();
+                        DisplayResult(item.word);
+                    }
+                }else{
+                    DisplayResult(historyItems.get(position).word);
+                }
+
             }
         });
     }
 
-    public void Search(Context context, String keyword)
+    public String[] getHistory(){
+        String[] temp = new String[historyItems.size()];
+        for(int i = 0; i < historyItems.size(); i++){
+            temp[i] = historyItems.get(i).word.getItems()[0];
+        }
+        return temp;
+    }
+
+    public void DisplayResult(Word word)
+    {
+        Intent intent = new Intent(context, DetailActivity.class);
+        intent.putExtra("word", word);
+        context.startActivity(intent);
+        Log.e("display", word.toString());
+    }
+
+    public void Search(String keyword)
     {
         resultList = searchController.getResults(context,"en_vi.db", "main", keyword, "word");
         listView.setAdapter(null);
