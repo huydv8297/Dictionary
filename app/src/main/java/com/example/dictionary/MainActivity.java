@@ -1,16 +1,10 @@
 package com.example.dictionary;
 
-import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,13 +17,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.example.dictionary.Controller.ContentManager;
+import com.example.dictionary.Controller.DictionaryManager;
+import com.example.dictionary.Entity.Dictionary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +40,12 @@ public class MainActivity extends AppCompatActivity
     List<String> items = new ArrayList<>();
     Fragment fragment;
     ContentManager contentManager;
+    DictionaryManager dictionaryManager;
+
+    List<Dictionary> listDictionary = new ArrayList<>();
     ImageView cancleButton;
     private String[] history;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +59,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
 
         ListView listView = findViewById(R.id.history_list);
+
+        dictionaryManager = new DictionaryManager(MainActivity.this);
+        dictionaryManager.loadData();
+        listDictionary = dictionaryManager.getDictionaryList();
+        items = dictionaryManager.getDictionaryListName();
+
         contentManager = new ContentManager(MainActivity.this, listView);
 
         cancleButton = findViewById(R.id.cancel_button);

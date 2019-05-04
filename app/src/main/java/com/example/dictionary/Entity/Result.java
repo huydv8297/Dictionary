@@ -1,6 +1,7 @@
-package com.example.dictionary;
+package com.example.dictionary.Entity;
 
 import com.example.dictionary.Entity.Word;
+import com.example.dictionary.R;
 
 public class Result {
 
@@ -8,7 +9,7 @@ public class Result {
     public int iconId;
     public int arrowId;
 
-    Word word;
+    public Word word;
 
     public Result(Word word) {
         this.word = word;

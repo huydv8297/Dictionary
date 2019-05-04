@@ -1,6 +1,7 @@
-package com.example.dictionary;
+package com.example.dictionary.Entity;
 
 import com.example.dictionary.Entity.Word;
+import com.example.dictionary.R;
 
 public class HistoryItem {
 
@@ -9,10 +10,8 @@ public class HistoryItem {
     public long time;
     public int iconId;
     public int arrowId;
-    Word word;
 
     public HistoryItem(Word word, long time) {
-        this.word = word;
         this.value = word.getItems()[0];
         this.time = time;
         this.iconId = R.drawable.history;
