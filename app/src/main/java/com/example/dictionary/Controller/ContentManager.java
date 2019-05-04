@@ -2,6 +2,7 @@ package com.example.dictionary.Controller;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,39 +10,48 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
-import com.example.dictionary.Controller.SearchController;
 import com.example.dictionary.DetailActivity;
-import com.example.dictionary.Entity.HistoryItem;
+import com.example.dictionary.Entity.Dictionary;
 import com.example.dictionary.Entity.Result;
 import com.example.dictionary.Entity.Word;
 import com.example.dictionary.HistoryListAdapter;
 import com.example.dictionary.ResultListAdapter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ContentManager {
     public BaseAdapter adapter;
-    List<HistoryItem> historyItems = new ArrayList<HistoryItem>();
+    ArrayList<String> historyItems = new ArrayList<String>();
     List<Result> resultList = new ArrayList<Result>();
     ListView listView;
     LayoutInflater layoutInflater;
     SearchController searchController;
+    SharedPreferences sharedPref;
+
+    public DictionaryManager dictionaryManager;
     public Context context;
+    public Dictionary currentDict;
 
     public ContentManager(Context context ,ListView listView) {
         this.context = context;
         this.listView = listView;
         this.layoutInflater = layoutInflater.from(context);
+        sharedPref = context.getSharedPreferences("dictionary", 0);
         searchController = new SearchController(context);
         adapter = new HistoryListAdapter(layoutInflater ,historyItems);
+
+        dictionaryManager = new DictionaryManager(context);
+        dictionaryManager.loadData();
 
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(adapter instanceof ResultListAdapter){
-                    HistoryItem item = new HistoryItem( resultList.get(position).word, 1);
+                    String item = resultList.get(position).word.getItems()[0];
                     if(!historyItems.contains(item))
                     {
                         historyItems.add(0, item);
@@ -49,7 +59,7 @@ public class ContentManager {
                         DisplayResult(resultList.get(position).word);
                     }
                 }else{
-                    Result result = searchController.getHistoryResult("en_vi.db", "main", historyItems.get(position).value, "word");
+                    Result result = searchController.getHistoryResult(currentDict.getDbname(), "main", historyItems.get(position), "word");
                     DisplayResult(result.word);
                 }
 
@@ -57,13 +67,29 @@ public class ContentManager {
         });
     }
 
-    public String[] getHistory(){
-        String[] temp = new String[historyItems.size()];
-        for(int i = 0; i < historyItems.size(); i++){
-            temp[i] = historyItems.get(i).value;
+    public void loadHistory(){
+
+        if(sharedPref == null)
+            Log.e("error", "null");
+        Set<String> saveHistory = sharedPref.getStringSet("saveHistory" + currentDict.getId(), null);
+
+        historyItems = new ArrayList<>();
+        if(saveHistory != null){
+            historyItems = new ArrayList<>(saveHistory);
         }
-        return temp;
+        listView.setAdapter(null);
+        adapter = new HistoryListAdapter(layoutInflater, historyItems);
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
+
+    public void saveHistory(){
+        SharedPreferences.Editor editor = sharedPref.edit();
+        Set<String> temp = new HashSet<>(historyItems);
+        editor.putStringSet("saveHistory" + currentDict.getId(), temp);
+        editor.commit();
+    }
+
 
     public void DisplayResult(Word word)
     {
@@ -73,17 +99,9 @@ public class ContentManager {
         Log.e("display", word.toString());
     }
 
-    public void DisplayResult(String keyword)
+    public void Search(String dbName, String keyword)
     {
-        Intent intent = new Intent(context, DetailActivity.class);
-        intent.putExtra("word", keyword);
-        context.startActivity(intent);
-        Log.e("display", keyword);
-    }
-
-    public void Search(String keyword)
-    {
-        resultList = searchController.getResults("en_vi.db", "main", keyword, "word");
+        resultList = searchController.getResults(dbName, "main", keyword, "word");
         listView.setAdapter(null);
         adapter = new ResultListAdapter(layoutInflater, resultList);
         listView.setAdapter(adapter);
@@ -97,8 +115,5 @@ public class ContentManager {
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
-
-
-
 
 }

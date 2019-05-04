@@ -22,6 +22,7 @@ public class DictionaryManager {
 
     public ArrayList<Dictionary> dictionaryList;
     public ArrayList<String> dictionaryListName;
+    public Dictionary currentDict;
 
     public DictionaryManager(Context context) {
         this.context = context;
@@ -66,7 +67,4 @@ public class DictionaryManager {
     public void setDictionaryListName(ArrayList<String> dictionaryListName) {
         this.dictionaryListName = dictionaryListName;
     }
-
-
-
 }

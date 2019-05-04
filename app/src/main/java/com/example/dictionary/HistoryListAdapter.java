@@ -4,19 +4,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.example.dictionary.Entity.HistoryItem;
 
 import java.util.List;
 
 public class HistoryListAdapter extends BaseAdapter {
 
-    private List<HistoryItem> listData;
+    private List<String> listData;
     private LayoutInflater layoutInflater;
 
-    public HistoryListAdapter(LayoutInflater aContext,  List<HistoryItem> listData) {
+    public HistoryListAdapter(LayoutInflater aContext,  List<String> listData) {
         this.listData = listData;
         layoutInflater = aContext;
     }
@@ -41,18 +38,18 @@ public class HistoryListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.history_item, null);
             holder = new ViewHolder();
-            holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+            //holder.icon = (ImageView) convertView.findViewById(R.id.icon);
             holder.value = (TextView) convertView.findViewById(R.id.value);
-            holder.arrow = (ImageView) convertView.findViewById(R.id.arrow);
+            //holder.arrow = (ImageView) convertView.findViewById(R.id.arrow);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        HistoryItem historyItem = this.listData.get(position);
-        holder.value.setText(historyItem.getValue());
-        holder.arrow.setImageResource(historyItem.getArrowId());
-        holder.icon.setImageResource(historyItem.getIconId());
+        String historyItem = this.listData.get(position);
+        holder.value.setText(historyItem);
+        //holder.arrow.setImageResource(historyItem.getArrowId());
+        //holder.icon.setImageResource(historyItem.getIconId());
 
         return convertView;
     }
@@ -60,9 +57,9 @@ public class HistoryListAdapter extends BaseAdapter {
 
 
     static class ViewHolder {
-        ImageView icon;
+        //ImageView icon;
         TextView value;
-        ImageView arrow;
+        //ImageView arrow;
     }
 
 }

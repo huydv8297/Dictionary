@@ -1,5 +1,6 @@
 package com.example.dictionary;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -40,12 +41,11 @@ public class MainActivity extends AppCompatActivity
     List<String> items = new ArrayList<>();
     Fragment fragment;
     ContentManager contentManager;
-    DictionaryManager dictionaryManager;
+
 
     List<Dictionary> listDictionary = new ArrayList<>();
     ImageView cancleButton;
-    private String[] history;
-
+    SharedPreferences sharedPref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,12 +60,13 @@ public class MainActivity extends AppCompatActivity
 
         ListView listView = findViewById(R.id.history_list);
 
-        dictionaryManager = new DictionaryManager(MainActivity.this);
-        dictionaryManager.loadData();
-        listDictionary = dictionaryManager.getDictionaryList();
-        items = dictionaryManager.getDictionaryListName();
 
+        sharedPref= getSharedPreferences("dictionary", 0);
         contentManager = new ContentManager(MainActivity.this, listView);
+        listDictionary = contentManager.dictionaryManager.getDictionaryList();
+
+
+        items = contentManager.dictionaryManager.getDictionaryListName();
 
         cancleButton = findViewById(R.id.cancel_button);
         cancleButton.setOnClickListener(new View.OnClickListener() {
@@ -83,22 +84,35 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        items.add("Nhat - Viet");
-        items.add("Viet - Nhat");
-        items.add("Anh - Viet");
-        items.add("Viet - Anh");
+
         dictionaryList = (ListView) findViewById(R.id.dic_list);
         dictionaryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items));
+
+        //get pre dictionary
+        String currentDictName = sharedPref.getString("currentDictName", "none");
+        if(currentDictName.equals("none")){
+            contentManager.currentDict = listDictionary.get(0);
+        }else{
+            int index = items.indexOf(currentDictName);
+            contentManager.currentDict = listDictionary.get(index);
+        }
+        title.setText( contentManager.currentDict.getName());
+        contentManager.loadHistory();
 
         dictionaryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                title.setText(items.get(position));
+                title.setText( items.get(position));
                 closeNavigation();
+                contentManager.saveHistory();
+                contentManager.currentDict = listDictionary.get(position);
+                contentManager.loadHistory();
+                SharedPreferences.Editor  editor = sharedPref.edit();
+                editor.putString("currentDictName", contentManager.currentDict.getName());
+                editor.commit();
             }
         });
 
-        history = contentManager.getHistory();
         editText = (EditText) findViewById(R.id.input_text);
 
         editText.addTextChangedListener(new TextWatcher() {
@@ -111,7 +125,7 @@ public class MainActivity extends AppCompatActivity
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length() != 0){
                     Log.e("enter", s.toString());
-                    contentManager.Search( s.toString());
+                    contentManager.Search(contentManager.currentDict.getDbname(), s.toString());
                     cancleButton.setVisibility(View.VISIBLE);
                 }else{
                     contentManager.Cancel();
@@ -125,8 +139,12 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+    }
 
-
+    @Override
+    protected void onPause() {
+        contentManager.saveHistory();
+        super.onPause();
     }
 
     @Override
