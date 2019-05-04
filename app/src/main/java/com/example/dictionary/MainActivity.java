@@ -1,7 +1,13 @@
 package com.example.dictionary;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,9 +33,16 @@ import android.widget.TextView;
 import com.example.dictionary.Controller.ContentManager;
 import com.example.dictionary.Controller.DictionaryManager;
 import com.example.dictionary.Entity.Dictionary;
+import com.example.dictionary.Utils.Algorithm;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -209,5 +222,68 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
     }
 
+    public void addDictionary(View view) {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        startActivityForResult(intent, 42);
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode != Activity.RESULT_OK) return;
+        if (data == null) return;
+
+        if (requestCode == 42) {
+            try {
+                Uri uri = data.getData();
+                String dicFileName = Algorithm.FileNameFromUri(data.getData(), false);
+                String idxFilePath = Algorithm.ReplaceUriFileName(uri, dicFileName + ".idx");
+                String ifoFilePath = Algorithm.ReplaceUriFileName(uri, dicFileName + ".ifo");
+                String primaryRoot = Environment.getExternalStorageDirectory().getPath();
+
+                Scanner ifoReader = new Scanner(new FileInputStream(primaryRoot + "/" + ifoFilePath));
+                TreeMap<String, String> info = new TreeMap<>();
+                while (ifoReader.hasNextLine()) {
+                    String line = ifoReader.nextLine();
+                    if (line.indexOf("=") < 0) continue;
+                    String[] pair = line.split("=", 2);
+                    info.put(pair[0], pair[1]);
+                }
+                ifoReader.close();
+
+                byte[] idxFileBytes = Algorithm.ReadFileToBytes(primaryRoot + "/" + idxFilePath);
+                byte[] dicFileBytes = Algorithm.ReadFileToBytes(getContentResolver().openInputStream(uri));
+
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<String> words = new ArrayList<>();
+                        List<Integer> wordOffets = new ArrayList<>();
+                        List<Integer> wordSizes = new ArrayList<>();
+                        for (int currentIndex = 0; currentIndex < idxFileBytes.length;) {
+                            int wordLookaheadIdx = currentIndex;
+                            while (idxFileBytes[wordLookaheadIdx] != 0x00) ++wordLookaheadIdx;
+                            int wordBytesCount = wordLookaheadIdx - currentIndex;
+                            try {
+                                String word = new String(idxFileBytes, currentIndex, wordBytesCount, "UTF-8");
+                                words.add(word);
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+
+                            int offsetIdx = wordLookaheadIdx + 1;
+                            byte[] offsetBytes = new byte[4];
+                            System.arraycopy(idxFileBytes, currentIndex, offsetBytes, 0, 4);
+                            // TODO: Implement the rest of the parsing process
+                        }
+                    }
+                });
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
