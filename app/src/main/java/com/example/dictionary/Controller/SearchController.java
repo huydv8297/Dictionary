@@ -23,7 +23,7 @@ public class SearchController {
 
         ArrayList<Result> wordResults = new ArrayList<>();
 
-        Cursor cursor = mDbHelper.getWord(tableName, columeQuery + " LIKE '" + keyWord + "%'");
+        Cursor cursor = mDbHelper.getWord(tableName, columeQuery + " LIKE '" + keyWord + "%'  ORDER BY " + columeQuery + " ASC");
         if(cursor == null)
             return  wordResults;
         if (cursor.moveToFirst()) {
