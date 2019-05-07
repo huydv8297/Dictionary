@@ -124,7 +124,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length() != 0){
-                    Log.e("enter", s.toString());
                     contentManager.Search(contentManager.currentDict.getDbname(), s.toString());
                     cancleButton.setVisibility(View.VISIBLE);
                 }else{

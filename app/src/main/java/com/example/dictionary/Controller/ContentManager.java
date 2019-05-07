@@ -56,13 +56,12 @@ public class ContentManager {
                     {
                         historyItems.add(0, item);
                         adapter.notifyDataSetChanged();
-                        DisplayResult(resultList.get(position).word);
+                        displayResult(resultList.get(position).word);
                     }
                 }else{
                     Result result = searchController.getHistoryResult(currentDict.getDbname(), "main", historyItems.get(position), "word");
-                    DisplayResult(result.word);
+                    displayResult(result.word);
                 }
-
             }
         });
     }
@@ -91,12 +90,12 @@ public class ContentManager {
     }
 
 
-    public void DisplayResult(Word word)
+    public void displayResult(Word word)
     {
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra("word", word);
         context.startActivity(intent);
-        Log.e("display", word.toString());
+
     }
 
     public void Search(String dbName, String keyword)
@@ -106,7 +105,7 @@ public class ContentManager {
         adapter = new ResultListAdapter(layoutInflater, resultList);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        Log.e("Search", keyword);
+
     }
 
     public void Cancel(){

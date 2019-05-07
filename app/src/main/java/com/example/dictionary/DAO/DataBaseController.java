@@ -60,7 +60,7 @@ public class DataBaseController {
     {
         try
         {
-            String sql ="SELECT * FROM " + tableName + " WHERE " + condition;
+            String sql ="SELECT * FROM " + tableName + " WHERE " + condition + "LIMIT 20";
 
             Cursor mCur = mDb.rawQuery(sql, null);
             if (mCur!=null)

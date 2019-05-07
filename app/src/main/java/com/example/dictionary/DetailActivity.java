@@ -26,7 +26,6 @@ public class DetailActivity extends AppCompatActivity {
 
         detail.setText(word.getItems()[1]);
 
-        Log.e("recever", word.getItems()[0]);
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
