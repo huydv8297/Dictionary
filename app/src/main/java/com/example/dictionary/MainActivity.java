@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void addDictionary(View view) {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
         startActivityForResult(intent, 42);
@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 ifoReader.close();
 
-                byte[] idxFileBytes = Algorithm.ReadFileToBytes(primaryRoot + "/" + idxFilePath);
+                final byte[] idxFileBytes = Algorithm.ReadFileToBytes(primaryRoot + "/" + idxFilePath);
                 byte[] dicFileBytes = Algorithm.ReadFileToBytes(getContentResolver().openInputStream(uri));
 
                 AsyncTask.execute(new Runnable() {
