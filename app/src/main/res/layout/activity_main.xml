@@ -28,15 +28,25 @@
             <include layout="@layout/nav_header_main"
                 android:id="@+id/my"
                 />
+
             <ListView
                 android:id="@+id/dic_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:choiceMode="singleChoice"
                 android:divider="@null"
                 android:dividerHeight="@dimen/fab_margin">
 
             </ListView>
+
+            <ImageButton
+                android:id="@+id/btn_add_dic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:contentDescription="@string/menu_add_dic"
+                android:onClick="addDictionary"
+                app:srcCompat="@android:drawable/ic_input_add" />
         </LinearLayout>
     </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
